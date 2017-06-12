@@ -43,17 +43,12 @@ public class MovementState : System.Object {
 		currentLocalLateralTurnSpeed = Mathf.MoveTowards (currentLocalLateralTurnSpeed, targetLateralTurnSpeed, lateralTurnAcceleration * Time.deltaTime);
 
 		// Do upward turning
-//		var targetVerticalTurnSpeed = currentLocalVerticalTurnSpeed;
 		var accelerationToUse = 0f;
 		if (inputVector.y > 0) {
-//			targetVerticalTurnSpeed = -inputVector.y * upwardTurnMaxSpeed;
 			accelerationToUse = upwardTurnAcceleration;
 		} else {
-//			targetVerticalTurnSpeed = -inputVector.y * downwardTurnMaxSpeed;
 			accelerationToUse = downwardTurnAcceleration;
-		}
-//		currentLocalVerticalTurnSpeed = Mathf.MoveTowards (currentLocalVerticalTurnSpeed, targetVerticalTurnSpeed, accelerationToUse * Time.deltaTime);
-	
+		}	
 		currentVerticalAngleXAxis = Mathf.MoveTowards (currentVerticalAngleXAxis, inputVector.y, accelerationToUse*Time.deltaTime);
 	}
 
@@ -65,10 +60,7 @@ public class MovementState : System.Object {
 		var originalAngle = 90 - Vector3.Angle(playerTransform.forward,Vector3.up);
 		var newVerticalAngle = currentVerticalAngleXAxis > 0 ? verticalMovementCurve.Evaluate(currentVerticalAngleXAxis)*upwardTurnSteepestAngle : verticalMovementCurve.Evaluate(-currentVerticalAngleXAxis)*-downwardTurnSteepestAngle;
 		Debug.Log ("New vert angle " + newVerticalAngle + " og angle " + originalAngle);
-		//		var clampedNewVerticalAngle = Mathf.Clamp (newVerticalAngle, -downwardTurnSteepestAngle, upwardTurnSteepestAngle);
 		var amountToRotate = newVerticalAngle - originalAngle;
-//		Debug.Log("Current turn vertical " + currentLocalVerticalTurnSpeed + " new vertical angle " + newVerticalAngle + " upward turn steepest " + upwardTurnSteepestAngle);
-//		if(!((currentVerticalAngleXAxis < 0 && newVerticalAngle > upwardTurnSteepestAngle) || (currentLocalVerticalTurnSpeed > 0 && newVerticalAngle < -downwardTurnSteepestAngle)))
 		playerTransform.Rotate (-amountToRotate * Vector3.right, Space.Self);
 	}
 
