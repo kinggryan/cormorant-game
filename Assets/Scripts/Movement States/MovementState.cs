@@ -18,13 +18,11 @@ public class MovementState : System.Object {
 	protected float upwardTurnSteepestAngle;	//!< The steepest angle you can ascend at
 	protected float downwardTurnAcceleration;
 	protected float downwardTurnSteepestAngle;	//!< THe steepest angle you can descend at
+	protected float verticalTurnMaxSpeed;		//!< The max rate of vertical turning
 
 	protected float forwardAcceleration;		//!< The speed used to calculate the desired forward speed.
 	protected float forwardMaxSpeed;
 	protected float forwardMinSpeed;
-	protected float returnToMaxSpeedAcceleration;	//!< The rate at which the player will return to the max speed if exceeding it.
-	protected float returnToMinSpeedAcecleration;	//!< The rate at which the player will return to the min speed if below it.
-	protected float forwardDrag;				//!< The amount to reduce the forward speed per second, until reaching min speed.
 	protected float maxLateralDrag;				//!< THe maximum drag applied laterally, based on the difference between intended movement direction and actual movement direction. This is based on the dot product of the two vectors.
 	protected float gravity;					//!< The acceleration along the y axis.
 
@@ -34,7 +32,7 @@ public class MovementState : System.Object {
 		UpdateRotation ();
 		UpdateVelocity ();
 		Move ();
-		return null;
+		return TransitionToState();
 	}
 
 	void UpdateTurningWithInput(Vector3 inputVector) {
@@ -53,43 +51,37 @@ public class MovementState : System.Object {
 	}
 
 	void UpdateRotation() {
+		UpdateLateralRotation ();
+		UpdateVerticalRotation ();
+	}
+
+	protected virtual void UpdateLateralRotation() {
 		// Rotate laterally
 		playerTransform.Rotate (currentLocalLateralTurnSpeed * Vector3.up * Time.deltaTime, Space.World);
+	}
 
+	protected virtual void UpdateVerticalRotation() {
 		// Only rotate up to the steepest allowed angles for vertical rotation
 		var originalAngle = 90 - Vector3.Angle(playerTransform.forward,Vector3.up);
 		var newVerticalAngle = currentVerticalAngleXAxis > 0 ? verticalMovementCurve.Evaluate(currentVerticalAngleXAxis)*upwardTurnSteepestAngle : verticalMovementCurve.Evaluate(-currentVerticalAngleXAxis)*-downwardTurnSteepestAngle;
-		Debug.Log ("New vert angle " + newVerticalAngle + " og angle " + originalAngle);
-		var amountToRotate = newVerticalAngle - originalAngle;
+		var amountToRotate = Mathf.Clamp(newVerticalAngle - originalAngle,-verticalTurnMaxSpeed*Time.deltaTime,verticalTurnMaxSpeed*Time.deltaTime);
 		playerTransform.Rotate (-amountToRotate * Vector3.right, Space.Self);
 	}
 
 	void UpdateVelocity() {
 		var originalVelocity = currentVelocity;
-//		Debug.Log ("Cur vel " + currentVelocity + " forward max spd " + forwardMaxSpeed);
-//		if (currentVelocity.magnitude < forwardMaxSpeed) {
+
 		currentVelocity = currentVelocity + forwardAcceleration * playerTransform.forward * Time.deltaTime;
-//		}
-//		currentVelocity += gravity * Vector3.down * Time.deltaTime;
-//
-//		// Apply lateral drag
-//		float amountOfLateralDrag = Vector3.Dot (currentVelocity, playerTransform.forward);
-//		var directionOfLateralDrag = Vector3.Project (currentVelocity, playerTransform.forward);
-//		directionOfLateralDrag.y = 0;
-//		directionOfLateralDrag.Normalize ();
-//		currentVelocity += amountOfLateralDrag * maxLateralDrag * Time.deltaTime * directionOfLateralDrag;
+		currentVelocity += gravity * Vector3.down * Time.deltaTime;
+
+		// Apply lateral drag
+		float amountOfLateralDrag = Vector3.Dot (currentVelocity, playerTransform.forward);
+		var directionOfLateralDrag = Vector3.Project (currentVelocity, playerTransform.forward);
+		directionOfLateralDrag.y = 0;
+		directionOfLateralDrag.Normalize ();
+		currentVelocity += amountOfLateralDrag * maxLateralDrag * Time.deltaTime * directionOfLateralDrag;
 
 		// If above max speed, apply max drag
-//		var forwardDragToApply = 0f;
-//		if (currentVelocity.magnitude > forwardMaxSpeed) {
-//			forwardDragToApply = returnToMaxSpeedAcceleration;
-//		} else if (currentVelocity.magnitude > forwardMinSpeed) {
-//			forwardDragToApply = forwardDrag;
-//		} else if (currentVelocity.magnitude < forwardMinSpeed) {
-//			forwardDragToApply = -returnToMinSpeedAcecleration;
-//		}
-//		Debug.Log ("Forward drag to apply " + forwardDragToApply);
-//		currentVelocity -= forwardDragToApply * Time.deltaTime * currentVelocity.normalized;
 		if (currentVelocity.magnitude > forwardMaxSpeed) {
 			currentVelocity = forwardMaxSpeed * currentVelocity.normalized;
 		}
@@ -99,6 +91,21 @@ public class MovementState : System.Object {
 		playerTransform.position += currentVelocity*Time.deltaTime;
 	}
 
+	protected virtual MovementState TransitionToState() {
+		return null;
+	} 
+
+	protected MovementState UpdateNewState(MovementState newState) {
+		newState.playerTransform = playerTransform;
+		newState.verticalMovementCurve = verticalMovementCurve;
+		newState.InheritMovementProperties (currentVelocity);
+		return newState;
+	}
+
+	public void InheritMovementProperties(Vector3 currentVelocity) {
+		this.currentVelocity = currentVelocity;
+	}
+
 	// Input Getters
 
 	Vector3 GetInputVector() {
@@ -106,15 +113,17 @@ public class MovementState : System.Object {
 		return inputVector;
 	}
 
-	bool GetDiveButtonPressed() {
-		return Input.GetButtonDown("jump");
+	protected bool GetDiveButtonPressed() {
+		return Input.GetButtonDown("Jump");
 	}
 
 	bool GetDiveButtonHeld() {
-		return Input.GetButton("jump");
+		return Input.GetButton("Jump");
 	}
 
-	bool GetDiveButtonReleased() {
-		return Input.GetButtonUp("jump");
+	protected bool GetDiveButtonReleased() {
+		return Input.GetButtonUp("Jump");
 	}
+
+
 }

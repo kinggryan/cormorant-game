@@ -20,6 +20,7 @@ public class PlayerController : MonoBehaviour {
 		// Give input to your state
 		var newState = state.Update();
 		if (newState != null) {
+			Debug.Log ("Transitioning to " + newState);
 			state = newState;
 		}
 	}

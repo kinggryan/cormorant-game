@@ -9,19 +9,23 @@ public class MovementStatePoweredFlight : MovementState {
 		lateralTurnAcceleration = 60f;
 		lateralTurnMaxSpeed = 30f;
 		upwardTurnAcceleration = 1f;
-//		upwardTurnMaxSpeed = 30f;
 		upwardTurnSteepestAngle = 25f;
 		downwardTurnAcceleration = 1f;
-//		downwardTurnMaxSpeed = 30f;
 		downwardTurnSteepestAngle = 25f;
+		verticalTurnMaxSpeed = 45f;
 
 		forwardAcceleration = 50f;
 		forwardMaxSpeed = 15f;
 		forwardMinSpeed = 5f;
-		returnToMaxSpeedAcceleration = 50f;
-		returnToMinSpeedAcecleration = 50f;
-		forwardDrag = 25f;
-		maxLateralDrag = 50f;
+		maxLateralDrag = 10f;
 		gravity = 0f;
+	}
+
+	protected override MovementState TransitionToState() {
+		if (GetDiveButtonPressed ()) {
+			var newState = new MovementStateUnpoweredFlight ();
+			return UpdateNewState(newState);
+		}
+		return null;
 	}
 }
