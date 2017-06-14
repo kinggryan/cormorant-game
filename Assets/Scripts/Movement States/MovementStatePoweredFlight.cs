@@ -28,4 +28,13 @@ public class MovementStatePoweredFlight : MovementState {
 		}
 		return null;
 	}
+
+	protected override void UpdateVerticalRotation() {
+		base.UpdateVerticalRotation ();
+
+		// Now update so that our local Y axis is aligned to up.
+		var targetRotation = Quaternion.LookRotation(playerTransform.forward,Vector3.Cross(playerTransform.forward,Vector3.ProjectOnPlane(playerTransform.right,Vector3.up)));
+		var newRotation = Quaternion.Slerp (playerTransform.rotation, targetRotation, 10 * Time.deltaTime);
+		playerTransform.rotation = newRotation;
+	}
 }
