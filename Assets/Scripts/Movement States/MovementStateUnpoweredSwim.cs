@@ -21,7 +21,7 @@ public class MovementStateUnpoweredSwim : MovementState {
 		forwardMaxSpeed = 100f;
 		forwardMinSpeed = 5f;
 		maxLateralDrag = 15f;
-		forwardDrag = 15f;
+		forwardDrag = 2f;
 		gravity = 0f;
 	}
 
