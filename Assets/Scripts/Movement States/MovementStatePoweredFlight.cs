@@ -24,7 +24,10 @@ public class MovementStatePoweredFlight : MovementState {
 	protected override MovementState TransitionToState() {
 		if (GetDiveButtonPressed ()) {
 			var newState = new MovementStateUnpoweredFlight ();
-			return UpdateNewState(newState);
+			return UpdateNewState (newState);
+		} else if (underwater) {
+			var newState = new MovementStatePoweredSwim ();
+			return UpdateNewState (newState);
 		}
 		return null;
 	}
