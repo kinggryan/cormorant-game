@@ -10,9 +10,9 @@ public class MovementStateUnpoweredFlight : MovementState {
 	public MovementStateUnpoweredFlight() {
 		lateralTurnAcceleration = 60f;
 		lateralTurnMaxSpeed = 30f;
-		upwardTurnAcceleration = 0f;
+		upwardTurnAcceleration = 50f;
 		upwardTurnSteepestAngle = 90f;
-		downwardTurnAcceleration = 0f;
+		downwardTurnAcceleration = 50f;
 		downwardTurnSteepestAngle = 90f;
 
 		forwardAcceleration = 0f;
@@ -34,8 +34,14 @@ public class MovementStateUnpoweredFlight : MovementState {
 	}
 
 	protected override void UpdateVerticalRotation() {
-		var targetRotationLocalUp = Vector3.Cross (currentVelocity, playerTransform.right);
-		var targetRotation = Quaternion.LookRotation (currentVelocity, targetRotationLocalUp);
+		var targetRotationLocalForward = currentVelocity;
+		// Rotate local forward based on the input
+		var amountToTurn = currentVerticalAngleXAxis > 0 ? upwardTurnAcceleration*currentVerticalAngleXAxis : downwardTurnAcceleration*currentVerticalAngleXAxis;
+		Debug.Log ("Amount to turn " + amountToTurn);
+		targetRotationLocalForward = Quaternion.AngleAxis (amountToTurn * Time.deltaTime, Vector3.Cross (currentVelocity, Vector3.up))*targetRotationLocalForward;
+
+		var targetRotationLocalUp = Vector3.Cross (targetRotationLocalForward, playerTransform.right);
+		var targetRotation = Quaternion.LookRotation (targetRotationLocalForward, targetRotationLocalUp);
 		var currentRotation = Quaternion.Slerp (playerTransform.rotation, targetRotation, rotationSlerpRate * Time.deltaTime);
 		playerTransform.rotation = currentRotation;
 	}

@@ -76,7 +76,7 @@ public class MovementState : System.Object {
 		var originalVelocity = currentVelocity;
 
 //		Debug.Log ("Player transform forward: " + playerTransform.forward);
-		Debug.Log("Forward acceleration " + forwardAcceleration);
+//		Debug.Log("Forward acceleration " + forwardAcceleration);
 		currentVelocity = currentVelocity + forwardAcceleration * playerTransform.forward * Time.deltaTime;
 		currentVelocity += gravity * Vector3.down * Time.deltaTime;
 
@@ -98,7 +98,7 @@ public class MovementState : System.Object {
 			// Apply backward drag
 			var amountOfForwardDrag = currentVelocity.magnitude/forwardMaxSpeed;
 			currentVelocity = Vector3.MoveTowards (currentVelocity, Vector3.zero, amountOfForwardDrag * forwardDrag * Time.deltaTime);
-			Debug.Log ("Slowing this amount " + (amountOfForwardDrag * forwardDrag * Time.deltaTime));
+//			Debug.Log ("Slowing this amount " + (amountOfForwardDrag * forwardDrag * Time.deltaTime));
 		}
 	}
 
