@@ -24,9 +24,13 @@ public class MovementState : System.Object {
 	protected float forwardMaxSpeed;
 	protected float forwardMinSpeed;
 	protected float maxLateralDrag;				//!< THe maximum drag applied laterally, based on the difference between intended movement direction and actual movement direction. This is based on the dot product of the two vectors.
+	protected float forwardDrag;
 	protected float gravity;					//!< The acceleration along the y axis.
 
-	public virtual MovementState Update() {
+	protected bool underwater;
+
+	public virtual MovementState Update(bool underwater) {
+		this.underwater = underwater;
 		var input = GetInputVector();
 		UpdateTurningWithInput (input);
 		UpdateRotation ();
@@ -35,7 +39,7 @@ public class MovementState : System.Object {
 		return TransitionToState();
 	}
 
-	void UpdateTurningWithInput(Vector3 inputVector) {
+	protected virtual void UpdateTurningWithInput(Vector3 inputVector) {
 		// Do lateral turning
 		var targetLateralTurnSpeed = inputVector.x * lateralTurnMaxSpeed;
 		currentLocalLateralTurnSpeed = Mathf.MoveTowards (currentLocalLateralTurnSpeed, targetLateralTurnSpeed, lateralTurnAcceleration * Time.deltaTime);
@@ -68,26 +72,38 @@ public class MovementState : System.Object {
 		playerTransform.Rotate (-amountToRotate * Vector3.right, Space.Self);
 	}
 
-	void UpdateVelocity() {
+	protected virtual void UpdateVelocity() {
 		var originalVelocity = currentVelocity;
 
+//		Debug.Log ("Player transform forward: " + playerTransform.forward);
+		Debug.Log("Forward acceleration " + forwardAcceleration);
 		currentVelocity = currentVelocity + forwardAcceleration * playerTransform.forward * Time.deltaTime;
 		currentVelocity += gravity * Vector3.down * Time.deltaTime;
 
 		// Apply lateral drag
-		float amountOfLateralDrag = Vector3.Dot (currentVelocity, playerTransform.forward);
-		var directionOfLateralDrag = Vector3.Project (currentVelocity, playerTransform.forward);
-		directionOfLateralDrag.y = 0;
-		directionOfLateralDrag.Normalize ();
-		currentVelocity += amountOfLateralDrag * maxLateralDrag * Time.deltaTime * directionOfLateralDrag;
+//		float amountOfLateralDrag = Vector3.Dot (currentVelocity, playerTransform.forward);
+//		var directionOfLateralDrag = Vector3.Project (currentVelocity, playerTransform.forward);
+//		directionOfLateralDrag.y = 0;
+//		directionOfLateralDrag.Normalize ();
+//		Debug.Log ("Pre-drag " + currentVelocity);
+//		currentVelocity += amountOfLateralDrag * maxLateralDrag * Time.deltaTime * directionOfLateralDrag;
+//		Debug.Log ("Post-drag " + currentVelocity);
 
 		// If above max speed, apply max drag
 		if (currentVelocity.magnitude > forwardMaxSpeed) {
 			currentVelocity = forwardMaxSpeed * currentVelocity.normalized;
 		}
+
+		if (currentVelocity.magnitude > forwardMinSpeed) {
+			// Apply backward drag
+			var amountOfForwardDrag = currentVelocity.magnitude/forwardMaxSpeed;
+			currentVelocity = Vector3.MoveTowards (currentVelocity, Vector3.zero, amountOfForwardDrag * forwardDrag * Time.deltaTime);
+			Debug.Log ("Slowing this amount " + (amountOfForwardDrag * forwardDrag * Time.deltaTime));
+		}
 	}
 
 	void Move() {
+		Debug.Log ("VEL " + currentVelocity + " mag " + currentVelocity.magnitude);
 		playerTransform.position += currentVelocity*Time.deltaTime;
 	}
 

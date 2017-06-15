@@ -26,6 +26,9 @@ public class MovementStateUnpoweredFlight : MovementState {
 		if (GetDiveButtonReleased ()) {
 			var newState = new MovementStatePoweredFlight ();
 			return UpdateNewState (newState);
+		} else if (underwater) {
+			var newState = new MovementStateUnpoweredSwim ();
+			return UpdateNewState (newState);
 		}
 		return null;
 	}
