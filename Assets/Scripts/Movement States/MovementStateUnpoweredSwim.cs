@@ -25,6 +25,10 @@ public class MovementStateUnpoweredSwim : MovementState {
 		gravity = 0f;
 	}
 
+	public override float GetCurrentVerticalTurnSpeed() {
+		return currentVerticalTurnSpeed;
+	}
+
 	protected override MovementState TransitionToState() {
 		if (GetDiveButtonReleased ()) {
 			var newState = new MovementStatePoweredSwim ();

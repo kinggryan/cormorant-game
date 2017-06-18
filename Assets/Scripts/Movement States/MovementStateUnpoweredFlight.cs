@@ -22,6 +22,10 @@ public class MovementStateUnpoweredFlight : MovementState {
 		gravity = 9f;
 	}
 
+	public override float GetCurrentVerticalTurnSpeed() {
+		return 0f;
+	}
+
 	protected override MovementState TransitionToState() {
 		if (GetDiveButtonReleased ()) {
 			var newState = new MovementStatePoweredFlight ();

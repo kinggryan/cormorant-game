@@ -6,6 +6,7 @@ public class MovementStatePoweredFlight : MovementState {
 
 	float currentVerticalTurnSpeed = 0f;
 	float verticalTurnAcceleration = 45f;
+	float verticalTurnClampForce = 180f;
 
 	// Use this for initialization
 	public MovementStatePoweredFlight() {
@@ -22,6 +23,10 @@ public class MovementStatePoweredFlight : MovementState {
 		forwardMinSpeed = 5f;
 		maxLateralDrag = 10f;
 		gravity = 0f;
+	}
+
+	public override float GetCurrentVerticalTurnSpeed() {
+		return currentVerticalTurnSpeed;
 	}
 
 	protected override MovementState TransitionToState() {
@@ -43,8 +48,10 @@ public class MovementStatePoweredFlight : MovementState {
 	}
 
 	protected override void UpdateVerticalRotation() {
-		if((currentVerticalTurnSpeed < 0 && Vector3.Angle(playerTransform.forward,Vector3.up) > 90 - upwardTurnSteepestAngle) || (currentVerticalTurnSpeed > 0 && Vector3.Angle(playerTransform.forward,Vector3.down) > 90 - downwardTurnSteepestAngle))
-			playerTransform.Rotate (currentVerticalTurnSpeed * Vector3.right * Time.deltaTime, Space.Self);
+		if (!((currentVerticalTurnSpeed < 0 && Vector3.Angle (playerTransform.forward, Vector3.up) > 90 - upwardTurnSteepestAngle) || (currentVerticalTurnSpeed > 0 && Vector3.Angle (playerTransform.forward, Vector3.down) > 90 - downwardTurnSteepestAngle)))
+			currentVerticalTurnSpeed = Mathf.MoveTowards (currentVerticalTurnSpeed, 0, verticalTurnClampForce * Time.deltaTime);
+
+		playerTransform.Rotate (currentVerticalTurnSpeed * Vector3.right * Time.deltaTime, Space.Self);
 		// Now update so that our local Y axis is aligned to up.
 		var targetRotation = Quaternion.LookRotation(playerTransform.forward,Vector3.Cross(playerTransform.forward,Vector3.ProjectOnPlane(playerTransform.right,Vector3.up)));
 		var newRotation = Quaternion.Slerp (playerTransform.rotation, targetRotation, 10 * Time.deltaTime);

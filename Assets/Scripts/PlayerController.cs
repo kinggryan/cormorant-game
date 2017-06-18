@@ -6,6 +6,7 @@ public class PlayerController : MonoBehaviour {
 
 	MovementState state = new MovementStatePoweredFlight();
 
+	public PlayerAnimationManager animationManager;
 	public AnimationCurve verticalMovementCurve;	//!< The curve of vertical movement
 
 	public GameObject waterSplashPrefab;
@@ -27,6 +28,8 @@ public class PlayerController : MonoBehaviour {
 			Debug.Log ("Transitioning to " + newState);
 			state = newState;
 		}
+
+		animationManager.UpdateMovementParams (state.GetCurrentLateralTurnSpeed (), state.GetCurrentVerticalTurnSpeed(), 0, underwater, false);
 	}
 
 	void OnTriggerEnter(Collider trigger) {

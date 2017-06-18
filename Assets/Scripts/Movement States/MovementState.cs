@@ -43,6 +43,14 @@ public class MovementState : System.Object {
 		return currentVelocity;
 	}
 
+	public float GetCurrentLateralTurnSpeed() {
+		return currentLocalLateralTurnSpeed;
+	}
+
+	public virtual float GetCurrentVerticalTurnSpeed() {
+		return 0f;
+	}
+
 	protected virtual void UpdateTurningWithInput(Vector3 inputVector) {
 		// Do lateral turning
 		var targetLateralTurnSpeed = inputVector.x * lateralTurnMaxSpeed;
