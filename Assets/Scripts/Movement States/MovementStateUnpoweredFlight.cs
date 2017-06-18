@@ -37,7 +37,7 @@ public class MovementStateUnpoweredFlight : MovementState {
 		var targetRotationLocalForward = currentVelocity;
 		// Rotate local forward based on the input
 		var amountToTurn = currentVerticalAngleXAxis > 0 ? upwardTurnAcceleration*currentVerticalAngleXAxis : downwardTurnAcceleration*currentVerticalAngleXAxis;
-		Debug.Log ("Amount to turn " + amountToTurn);
+//		Debug.Log ("Amount to turn " + amountToTurn);
 		targetRotationLocalForward = Quaternion.AngleAxis (amountToTurn * Time.deltaTime, Vector3.Cross (currentVelocity, Vector3.up))*targetRotationLocalForward;
 
 		var targetRotationLocalUp = Vector3.Cross (targetRotationLocalForward, playerTransform.right);

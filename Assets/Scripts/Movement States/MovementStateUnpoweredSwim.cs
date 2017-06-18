@@ -50,9 +50,9 @@ public class MovementStateUnpoweredSwim : MovementState {
 
 
 	protected override void UpdateVelocity() {
-		Debug.Log ("Pre rotate: " + currentVelocity + " rotating " + currentVelocity + " towards " + playerTransform.forward*currentVelocity.magnitude + " max turn radians " + (verticalTurnMaxSpeed+lateralTurnMaxSpeed)*0.5f*Mathf.Deg2Rad*Time.deltaTime);
+//		Debug.Log ("Pre rotate: " + currentVelocity + " rotating " + currentVelocity + " towards " + playerTransform.forward*currentVelocity.magnitude + " max turn radians " + (verticalTurnMaxSpeed+lateralTurnMaxSpeed)*0.5f*Mathf.Deg2Rad*Time.deltaTime);
 		currentVelocity = Vector3.RotateTowards(currentVelocity,playerTransform.forward*currentVelocity.magnitude,(verticalTurnMaxSpeed+lateralTurnMaxSpeed)*0.5f*Mathf.Deg2Rad*Time.deltaTime,Mathf.Infinity);
-		Debug.Log ("Post rotate: " + currentVelocity);
+//		Debug.Log ("Post rotate: " + currentVelocity);
 
 		// If above max speed, apply max drag
 		if (currentVelocity.magnitude > forwardMaxSpeed) {

@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class MovementStatePoweredFlight : MovementState {
 
+	float currentVerticalTurnSpeed = 0f;
+	float verticalTurnAcceleration = 45f;
+
 	// Use this for initialization
 	public MovementStatePoweredFlight() {
 		lateralTurnAcceleration = 60f;
@@ -32,9 +35,16 @@ public class MovementStatePoweredFlight : MovementState {
 		return null;
 	}
 
-	protected override void UpdateVerticalRotation() {
-		base.UpdateVerticalRotation ();
+	protected override void UpdateTurningWithInput(Vector3 inputVector) {
+		// We basically ignore the vertical component of the base's input and replace it with our own.
+		base.UpdateTurningWithInput (inputVector);
+		var targetVerticalTurnSpeed = -inputVector.y * verticalTurnMaxSpeed;
+		currentVerticalTurnSpeed = Mathf.MoveTowards (currentVerticalTurnSpeed, targetVerticalTurnSpeed, Time.deltaTime * verticalTurnAcceleration);
+	}
 
+	protected override void UpdateVerticalRotation() {
+		if((currentVerticalTurnSpeed < 0 && Vector3.Angle(playerTransform.forward,Vector3.up) > 90 - upwardTurnSteepestAngle) || (currentVerticalTurnSpeed > 0 && Vector3.Angle(playerTransform.forward,Vector3.down) > 90 - downwardTurnSteepestAngle))
+			playerTransform.Rotate (currentVerticalTurnSpeed * Vector3.right * Time.deltaTime, Space.Self);
 		// Now update so that our local Y axis is aligned to up.
 		var targetRotation = Quaternion.LookRotation(playerTransform.forward,Vector3.Cross(playerTransform.forward,Vector3.ProjectOnPlane(playerTransform.right,Vector3.up)));
 		var newRotation = Quaternion.Slerp (playerTransform.rotation, targetRotation, 10 * Time.deltaTime);

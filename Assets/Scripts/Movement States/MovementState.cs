@@ -39,6 +39,10 @@ public class MovementState : System.Object {
 		return TransitionToState();
 	}
 
+	public Vector3 GetCurrentVelocity() {
+		return currentVelocity;
+	}
+
 	protected virtual void UpdateTurningWithInput(Vector3 inputVector) {
 		// Do lateral turning
 		var targetLateralTurnSpeed = inputVector.x * lateralTurnMaxSpeed;
@@ -103,7 +107,7 @@ public class MovementState : System.Object {
 	}
 
 	void Move() {
-		Debug.Log ("VEL " + currentVelocity + " mag " + currentVelocity.magnitude);
+//		Debug.Log ("VEL " + currentVelocity + " mag " + currentVelocity.magnitude);
 		playerTransform.position += currentVelocity*Time.deltaTime;
 	}
 

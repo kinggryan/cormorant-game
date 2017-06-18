@@ -8,6 +8,8 @@ public class PlayerController : MonoBehaviour {
 
 	public AnimationCurve verticalMovementCurve;	//!< The curve of vertical movement
 
+	public GameObject waterSplashPrefab;
+
 	bool underwater;
 
 	// Use this for initialization
@@ -31,10 +33,20 @@ public class PlayerController : MonoBehaviour {
 		// When entering trigger, send that to the movement state
 		underwater = true;
 		Debug.Log ("Entering water.");
+		CreateSplashEffect (state.GetCurrentVelocity().magnitude/50f);
 	}
 
 	void OnTriggerExit(Collider trigger) {
 		underwater = false;
 		Debug.Log ("Exiting water");
+		CreateSplashEffect (state.GetCurrentVelocity().magnitude/50f);
+	}
+
+	void CreateSplashEffect(float speedScaling) {
+		var waterSplashObj = GameObject.Instantiate (waterSplashPrefab, transform.position, Quaternion.AngleAxis(-90,Vector3.right));
+		var waterSplashSystem = waterSplashObj.GetComponent<ParticleSystem> ();
+		var emission = waterSplashSystem.emission;
+//		Debug.Log ("Scaling " + emission.rateOverTimeMultiplier);
+		emission.rateOverTimeMultiplier *= speedScaling;
 	}
 }
