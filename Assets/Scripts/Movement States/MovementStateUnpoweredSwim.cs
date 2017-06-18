@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class MovementStateUnpoweredSwim : MovementState {
 
-	float currentVerticalTurnSpeed = 0f;
 	float verticalTurnAcceleration = 90f;
 
 	// Use this for initialization
@@ -69,4 +68,8 @@ public class MovementStateUnpoweredSwim : MovementState {
 		}
 	}
 
+	protected override void UpdateLateralRotation() {
+		// Rotate around forward axis
+		playerTransform.Rotate (-currentLocalLateralTurnSpeed * Vector3.forward * Time.deltaTime, Space.Self);
+	}
 }

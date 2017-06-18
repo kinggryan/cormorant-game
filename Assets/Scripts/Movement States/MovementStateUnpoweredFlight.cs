@@ -49,4 +49,9 @@ public class MovementStateUnpoweredFlight : MovementState {
 		var currentRotation = Quaternion.Slerp (playerTransform.rotation, targetRotation, rotationSlerpRate * Time.deltaTime);
 		playerTransform.rotation = currentRotation;
 	}
+
+	protected override void UpdateLateralRotation() {
+		// Rotate around forward axis
+		playerTransform.Rotate (-currentLocalLateralTurnSpeed * Vector3.forward * Time.deltaTime, Space.Self);
+	}
 }

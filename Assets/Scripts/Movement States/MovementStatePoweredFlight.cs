@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class MovementStatePoweredFlight : MovementState {
 
-	float currentVerticalTurnSpeed = 0f;
 	float verticalTurnAcceleration = 45f;
 	float verticalTurnClampForce = 180f;
 

@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class MovementStatePoweredSwim : MovementState {
 
-	float currentVerticalTurnSpeed = 0f;
 	float verticalTurnAcceleration = 90f;
 
 	// Use this for initialization

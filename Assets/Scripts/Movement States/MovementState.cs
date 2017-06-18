@@ -10,6 +10,8 @@ public class MovementState : System.Object {
 	protected Vector3 currentVelocity = Vector3.zero;
 	protected float currentLocalLateralTurnSpeed;	//!< The turning around the local y axis.
 	protected float currentVerticalAngleXAxis;		//!< The turn speed around the local x axis
+	protected float currentVerticalTurnSpeed = 0f;
+
 
 	// Movement Control Properties
 	protected float lateralTurnAcceleration;	//!< How fast the lateral turn angle changes if movement is fully held in that direction
@@ -126,12 +128,14 @@ public class MovementState : System.Object {
 	protected MovementState UpdateNewState(MovementState newState) {
 		newState.playerTransform = playerTransform;
 		newState.verticalMovementCurve = verticalMovementCurve;
-		newState.InheritMovementProperties (currentVelocity);
+		newState.InheritMovementProperties (currentVelocity,currentLocalLateralTurnSpeed,currentVerticalTurnSpeed);
 		return newState;
 	}
 
-	public void InheritMovementProperties(Vector3 currentVelocity) {
+	public virtual void InheritMovementProperties(Vector3 currentVelocity,float lateralTurnSpeed, float verticalTurnSpeed) {
 		this.currentVelocity = currentVelocity;
+		this.currentLocalLateralTurnSpeed = lateralTurnSpeed;
+		this.currentVerticalTurnSpeed = verticalTurnSpeed;
 	}
 
 	// Input Getters
