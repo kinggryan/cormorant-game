@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour {
 	MovementState state = new MovementStatePoweredFlight();
 
 	public PlayerAnimationManager animationManager;
+	public PlayerCameraController cameraController;
 	public AnimationCurve verticalMovementCurve;	//!< The curve of vertical movement
 
 	public GameObject waterSplashPrefab;
@@ -30,18 +31,17 @@ public class PlayerController : MonoBehaviour {
 		}
 
 		animationManager.UpdateMovementParams (state.GetCurrentLateralTurnSpeed (), state.GetCurrentVerticalTurnSpeed(), 0, underwater, false);
+		cameraController.UpdateMovementParameters (state.GetCurrentVelocity ().magnitude / 15, 0);
 	}
 
 	void OnTriggerEnter(Collider trigger) {
 		// When entering trigger, send that to the movement state
 		underwater = true;
-		Debug.Log ("Entering water.");
 		CreateSplashEffect (state.GetCurrentVelocity().magnitude/50f);
 	}
 
 	void OnTriggerExit(Collider trigger) {
 		underwater = false;
-		Debug.Log ("Exiting water");
 		CreateSplashEffect (state.GetCurrentVelocity().magnitude/50f);
 	}
 

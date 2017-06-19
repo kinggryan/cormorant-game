@@ -21,9 +21,11 @@ public class PlayerCameraController : MonoBehaviour {
 
 	public void UpdateMovementParameters(float movementSpeedRatio, float turnRatio) {
 		var targetDistance = minSpeedDistanceFromPlayer + (maxSpeedDistanceFromPlayer - minSpeedDistanceFromPlayer) * movementSpeedRatio;
-		var targetTilt = maxTurnSpeedTilt * turnRatio;
-		transform.position = Vector3.Lerp (transform.position, transform.parent.position + transform.parent.forward * -targetDistance,lerpRate*Time.deltaTime);
-		var targetTiltDiff = targetTilt - Vector3.Angle (Vector3.up, transform.up);
-		transform.Rotate (new Vector3 (0, 0, targetTiltDiff), Space.Self);
+		var targetPos = new Vector3 (transform.localPosition.x, transform.localPosition.y, targetDistance);
+		transform.localPosition = Vector3.Lerp (transform.localPosition, targetPos, lerpRate * Time.deltaTime);
+//		var targetTilt = maxTurnSpeedTilt * turnRatio;
+//		transform.position = Vector3.Lerp (transform.position, transform.parent.position + transform.parent.forward * -targetDistance,lerpRate*Time.deltaTime);
+//		var targetTiltDiff = targetTilt - Vector3.Angle (Vector3.up, transform.up);
+//		transform.Rotate (new Vector3 (0, 0, targetTiltDiff), Space.Self);
 	}
 }
