@@ -87,7 +87,6 @@ public class MovementState : System.Object {
 	}
 
 	protected virtual void UpdateVelocity() {
-		var originalVelocity = currentVelocity;
 
 //		Debug.Log ("Player transform forward: " + playerTransform.forward);
 //		Debug.Log("Forward acceleration " + forwardAcceleration);
