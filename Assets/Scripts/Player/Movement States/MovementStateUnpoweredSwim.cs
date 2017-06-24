@@ -8,11 +8,11 @@ public class MovementStateUnpoweredSwim : MovementState {
 
 	// Use this for initialization
 	public MovementStateUnpoweredSwim() {
-		lateralTurnAcceleration = 90f;
+		lateralTurnAcceleration = 120f;
 		lateralTurnMaxSpeed = 60f;
-		upwardTurnAcceleration = 90f;
+		upwardTurnAcceleration = 120f;
 		upwardTurnSteepestAngle = 90f;
-		downwardTurnAcceleration = 90f;
+		downwardTurnAcceleration = 120f;
 		downwardTurnSteepestAngle = 90f;
 		verticalTurnMaxSpeed = 90f;
 
@@ -68,8 +68,8 @@ public class MovementStateUnpoweredSwim : MovementState {
 		}
 	}
 
-	protected override void UpdateLateralRotation() {
-		// Rotate around forward axis
-		playerTransform.Rotate (-currentLocalLateralTurnSpeed * Vector3.forward * Time.deltaTime, Space.Self);
-	}
+//	protected override void UpdateLateralRotation() {
+//		// Rotate around forward axis
+//		playerTransform.Rotate (-currentLocalLateralTurnSpeed * Vector3.forward * Time.deltaTime, Space.Self);
+//	}
 }

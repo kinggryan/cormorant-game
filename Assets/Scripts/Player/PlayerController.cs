@@ -36,13 +36,22 @@ public class PlayerController : MonoBehaviour {
 
 	void OnTriggerEnter(Collider trigger) {
 		// When entering trigger, send that to the movement state
-		underwater = true;
-		CreateSplashEffect (state.GetCurrentVelocity().magnitude/50f);
+		if (trigger.GetComponent<Fish> ()) {
+			// Destroy the fish
+			GameObject.Destroy(trigger.gameObject);
+		} else {
+			underwater = true;
+			CreateSplashEffect (state.GetCurrentVelocity().magnitude/50f);
+		}
 	}
 
 	void OnTriggerExit(Collider trigger) {
-		underwater = false;
-		CreateSplashEffect (state.GetCurrentVelocity().magnitude/50f);
+		if (trigger.GetComponent<Fish> ()) {
+			// Do nothing
+		} else {
+			underwater = false;
+			CreateSplashEffect (state.GetCurrentVelocity().magnitude/50f);
+		}
 	}
 
 	void CreateSplashEffect(float speedScaling) {
