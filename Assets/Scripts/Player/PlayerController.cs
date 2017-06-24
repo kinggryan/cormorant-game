@@ -12,7 +12,8 @@ public class PlayerController : MonoBehaviour {
 
 	public GameObject waterSplashPrefab;
 
-	bool underwater;
+    [HideInInspector]
+	public bool underwater;
 
 	// Use this for initialization
 	void Start () {
@@ -35,11 +36,14 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void OnTriggerEnter(Collider trigger) {
-		// When entering trigger, send that to the movement state
-		if (trigger.GetComponent<Fish> ()) {
-			// Destroy the fish
+        // When entering trigger, send that to the movement state
+        var fish = trigger.GetComponent<Fish>();
+        if (fish) {
+            // Destroy the fish
+            GameObject.Instantiate(fish.deathEffectPrefab, fish.transform.position, fish.transform.rotation);
 			GameObject.Destroy(trigger.gameObject);
-		} else {
+        }
+        else {
 			underwater = true;
 			CreateSplashEffect (state.GetCurrentVelocity().magnitude/50f);
 		}
