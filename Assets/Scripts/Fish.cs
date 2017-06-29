@@ -48,7 +48,7 @@ public class Fish : MonoBehaviour {
 
 			// Move
 			transform.position += transform.forward*currentSpeed*Time.deltaTime;
-			Debug.Log ("Current speed: " + currentSpeed);
+//			Debug.Log ("Current speed: " + currentSpeed);
 
 			return null;
 		}
