@@ -6,7 +6,7 @@ public class Fish : MonoBehaviour {
 
 	class MovementState : System.Object {
 
-		Transform transform;
+		protected Transform transform;
 
 		protected float minSpeed;
 		protected float maxSpeed;
@@ -27,7 +27,7 @@ public class Fish : MonoBehaviour {
 			FinishTurn();
 		}
 
-		public MovementState Update() {
+		public virtual MovementState Update() {
 			// Turn
 			transform.Rotate(Vector3.up,Time.deltaTime*currentTurnSpeed,Space.Self);
 			var originalSign = Mathf.Sign (currentTurnAngleRemaining);
@@ -66,9 +66,23 @@ public class Fish : MonoBehaviour {
 			currentTurnSpeed = 0;
 			changeSpeedTimeRemaining = Random.Range (minChangeMovementTime, maxChangeMovementTime);
 		}
+
+        protected float GetDistanceToPlayer()
+        {
+            var player = Object.FindObjectOfType<PlayerController>();
+            return Vector3.Distance(transform.position, player.transform.position);
+        }
+
+        protected bool GetPlayerIsUnderwater()
+        {
+            var player = Object.FindObjectOfType<PlayerController>();
+            return player.underwater;
+        }
 	}
 
 	class MovementStateDefault : MovementState {
+        float scaredDuration = 0f;
+
 		public MovementStateDefault(Transform transform) : base(transform) {
 			minSpeed = 5f;
 			maxSpeed = 8f;
@@ -79,8 +93,51 @@ public class Fish : MonoBehaviour {
 			minChangeMovementTime = 4f;
 			maxChangeMovementTime = 10f;
 		}
-	}
 
+        public override MovementState Update()
+        {
+            base.Update();
+            // Determine if player is far enough away
+            if (GetDistanceToPlayer() < 15f && GetPlayerIsUnderwater())
+            {
+                scaredDuration += Time.deltaTime;
+                if (scaredDuration > 0.75f)
+                    return new MovementStateScared(transform);
+            }
+            
+            return null;
+        }
+    }
+
+    class MovementStateScared : MovementState
+    {
+        public MovementStateScared(Transform transform) : base(transform)
+        {
+            minSpeed = 10f;
+            maxSpeed = 15f;
+            minTurnAngle = 25f;
+            maxTurnAngle = 180f;
+            minTurnSpeed = 120f;
+            maxTurnSpeed = 360f;
+            minChangeMovementTime = 10f;
+            maxChangeMovementTime = 15f;
+        }
+
+        public override MovementState Update()
+        {
+            base.Update();
+            // Determine if player is far enough away
+            if(GetDistanceToPlayer() < 15f && GetPlayerIsUnderwater())
+            {
+                return null;
+            } else
+            {
+                return new MovementStateDefault(transform);
+            }
+        }
+    }
+
+    public GameObject deathEffectPrefab;
 	MovementState state;
 
 	// Use this for initialization
