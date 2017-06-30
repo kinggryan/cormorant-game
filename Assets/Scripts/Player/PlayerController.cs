@@ -59,10 +59,8 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void CreateSplashEffect(float speedScaling) {
-		var waterSplashObj = GameObject.Instantiate (waterSplashPrefab, transform.position, Quaternion.AngleAxis(-90,Vector3.right));
-		var waterSplashSystem = waterSplashObj.GetComponent<ParticleSystem> ();
-		var emission = waterSplashSystem.emission;
-//		Debug.Log ("Scaling " + emission.rateOverTimeMultiplier);
-		emission.rateOverTimeMultiplier *= speedScaling;
+		var waterSplashObj = GameObject.Instantiate (waterSplashPrefab, transform.position, Quaternion.identity);
+		var waterSplashSystem = waterSplashObj.GetComponent<SplashControl> ();
+		waterSplashSystem.SetSplashAmount (speedScaling);
 	}
 }
